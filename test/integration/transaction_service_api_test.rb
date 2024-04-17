@@ -13,9 +13,11 @@ class TransactionServiceApiTest < Minitest::Test
 
   def test_delegate_addition
     response = @api.add_delegate(label: "Signer Delegate", delegate_address: @owner.address, owner: @owner)
-    assert_equal("201", response.code)
+    assert_equal("201", response.body)
 
     response = @api.delete_delegate(delegate_address: @owner.address, owner: @owner)
-    assert_equal("204", response.code)
+    puts response.body
+   
+    assert_equal("204", response.body)
   end
 end

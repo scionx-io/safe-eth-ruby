@@ -20,7 +20,7 @@ module Safe
       encoded_data = Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
 
       transaction = build_transaction(encoded_data)
-      tx_hash = Eip712.build(transaction, @chain_id, @safe_address)      
+      tx_hash = Eip712.build(transaction, @chain_id, @safe_address)
       signature = Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
 
       @safe_api.multisig_transaction(

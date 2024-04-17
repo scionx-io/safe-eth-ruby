@@ -11,6 +11,8 @@ module Safe
 
       @base_url = "https://safe-transaction-#{network}.safe.global/api/#{VERSION}"
       @safe_address = safe_address
+      puts "#{safe_address} : @safe_address"
+      
     end
 
     def network_name(chain_id)
@@ -29,7 +31,8 @@ module Safe
       totp = Time.now.to_i / 3600
       data_to_sign = "#{delegate_address}#{totp}"
       signature = owner.personal_sign(data_to_sign)
-
+      
+      puts "#{@safe_address} : @safe_address"
       post("delegates/", {
         safe: @safe_address,
         delegate: delegate_address,
@@ -75,6 +78,8 @@ module Safe
       Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
         request = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
         request.body = payload.to_json
+        
+        puts payload.to_json
         http.request(request)
       end
     end
