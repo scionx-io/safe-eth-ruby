@@ -1,0 +1,32 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Ruby ${{ matrix.ruby }}
+    strategy:
+      matrix:
+        ruby:
+          - '3.3.0'
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - name: Create .env file
+      run: |
+        echo "SAFE_ADDRESS=${{ secrets.SAFE_ADDRESS }}" > .env
+        echo "ALCHEMY_KEY=${{ secrets.ALCHEMY_KEY }}" >> .env
+        echo "DELEGATE_KEY=${{ secrets.DELEGATE_KEY }}" >> .env
+        echo "DELEGATE2_KEY=${{ secrets.DELEGATE2_KEY }}" >> .env
+    - name: Run the default task
+      run: bundle exec rake
