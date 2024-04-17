@@ -20,7 +20,7 @@ module Safe
       encoded_data = Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
 
       transaction = build_transaction(encoded_data)
-      tx_hash = Eip712.build(transaction, @chain_id, @safe_address)
+      tx_hash = Eip712.build(transaction, @chain_id, @safe_address)      
       signature = Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
 
       @safe_api.multisig_transaction(
@@ -41,7 +41,6 @@ module Safe
     end
 
     def build_transaction(encoded_data)
-      puts "nonce #{@contract.nonce}"
       {
         to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
         value: 0,
