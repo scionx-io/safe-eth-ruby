@@ -10,4 +10,3 @@ require "safe/contract"
 require "safe/util"
 require "safe/eip712"
 require "safe/abi/proxy"
-

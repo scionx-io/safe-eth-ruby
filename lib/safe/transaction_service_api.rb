@@ -28,6 +28,7 @@ module Safe
     def add_delegate(label:, delegate_address:, owner:)
       totp = Time.now.to_i / 3600
       data_to_sign = "#{delegate_address}#{totp}"
+      puts "owner #{owner.address}"
       signature = owner.personal_sign(data_to_sign)
 
       post("delegates/", {
