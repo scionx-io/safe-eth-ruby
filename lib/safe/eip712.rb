@@ -4,6 +4,8 @@ module Safe
   module Eip712
     class << self
       def build(transaction, chain_id, verifying_contract)
+        transaction_copy = transaction.dup
+        transaction_copy[:data] = Eth::Util.hex_to_bin transaction[:data]
         typed_data = {
           types: {
             EIP712Domain: [
@@ -27,8 +29,8 @@ module Safe
             verifyingContract: verifying_contract,
             chainId: chain_id,
           },
-          primaryType: "SafeTx",
-          message: transaction,
+
+          message: transaction_copy,
         }
 
         Eth::Eip712.hash(typed_data)
@@ -36,3 +38,4 @@ module Safe
     end
   end
 end
+

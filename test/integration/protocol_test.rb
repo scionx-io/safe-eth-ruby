@@ -14,7 +14,6 @@ class ProtocolTest < Minitest::Test
 
   def test_create_transaction
     response = @protocol.create_transaction(@transactions)
-    puts response.body
     assert_equal("201", response.code)
   end
 end
