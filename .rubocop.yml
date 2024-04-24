@@ -10,6 +10,7 @@ Performance:
   Enabled: true
 
 AllCops:
+  TargetRubyVersion: 3.3
   NewCops: disable
   SuggestExtensions: false
   Exclude:
