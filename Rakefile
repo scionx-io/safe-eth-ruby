@@ -24,7 +24,7 @@ end
 
 task gem: :build
 task :build do
-  system "gem build safe-eth-ruby.gemspec"
+  system "gem build safe_eth_ruby.gemspec"
 end
 
 task install: :build do

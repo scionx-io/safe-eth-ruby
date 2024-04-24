@@ -7,7 +7,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "safe/version"
 
 Gem::Specification.new do |s|
-  s.name        = "safe-eth-ruby"
+  s.name        = "safe_eth_ruby"
   s.version     = Safe::VERSION
   s.platform    = Gem::Platform::RUBY
   s.summary     = "Ruby library for interacting with Gnosis Safe Smart Wallets."
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.metadata["source_code_uri"] = s.homepage
   s.metadata["changelog_uri"] = "#{s.homepage}/blob/main/CHANGELOG.md"
-  s.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com/scionx-io"
+  s.metadata["allowed_push_host"] = "https://rubygems.org"
   s.metadata["github_repo"] = s.homepage
 
   s.files = Dir.glob("lib/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) } + ["LICENSE.txt", "README.md"]
