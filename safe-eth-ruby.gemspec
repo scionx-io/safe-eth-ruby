@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
 
   s.metadata["source_code_uri"] = s.homepage
   s.metadata["changelog_uri"] = "#{s.homepage}/blob/main/CHANGELOG.md"
-  s.metadata["allowed_push_host"] = "https://rubygems.org"
+  s.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com/scionx-io"
+  s.metadata["github_repo"] = s.homepage
 
   s.files = Dir.glob("lib/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) } + ["LICENSE.txt", "README.md"]
   s.extra_rdoc_files = ["README.md"]
