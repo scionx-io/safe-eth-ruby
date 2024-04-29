@@ -12,13 +12,13 @@ class UtilTest < Minitest::Test
 
   def test_encode_meta_transaction
     expected_encoded_data = "00a89005ab7d7fd81a94c8a8e0799648248cee693400000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000"
-    actual_encoded_data = Safe::Util.encode_meta_transaction(@transactions.first)
+    actual_encoded_data = SafeEthRuby::Util.encode_meta_transaction(@transactions.first)
     assert_equal(expected_encoded_data, actual_encoded_data)
   end
 
   def test_encode_multi_send_data
     expected_encoded_data = "0x00a89005ab7d7fd81a94c8a8e0799648248cee69340000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000c1b5bcbc94e6127ac3ee4054d0664e4f6afe45d300000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000"
-    actual_encoded_data = Safe::Util.encode_multi_send_data(@transactions)
+    actual_encoded_data = SafeEthRuby::Util.encode_multi_send_data(@transactions)
     assert_equal(expected_encoded_data, actual_encoded_data)
   end
 
@@ -26,7 +26,7 @@ class UtilTest < Minitest::Test
     expected = "a067eeb07384cbe54a82a4716909f124a80d2f9cad4ef2dd8ca106ac25541fcd79740950d9338a0bce1cc15145aac565ff08f98c3f9640a1496d191956c4b7bb1f"
     signature = "a067eeb07384cbe54a82a4716909f124a80d2f9cad4ef2dd8ca106ac25541fcd79740950d9338a0bce1cc15145aac565ff08f98c3f9640a1496d191956c4b7bb20"
 
-    actual =  Safe::Util.adjust_v_in_signature(signature)
+    actual =  SafeEthRuby::Util.adjust_v_in_signature(signature)
     assert_equal(expected, actual)
   end
 end

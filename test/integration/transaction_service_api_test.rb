@@ -4,7 +4,7 @@ require "test_helper"
 
 class TransactionServiceApiTest < Minitest::Test
   def setup
-    @api = Safe::TransactionServiceApi.new(
+    @api = SafeEthRuby::TransactionServiceApi.new(
       chain_id: 11_155_111,
       safe_address: "0x8739A1EcCD57B38c270070E89dc25958AAb6b750",
     )

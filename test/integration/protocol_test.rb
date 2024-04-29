@@ -6,7 +6,7 @@ class ProtocolTest < Minitest::Test
   def setup
     @delegate = Eth::Key.new(priv: ENV["DELEGATE_KEY"])
     @rpc = "https://eth-sepolia.g.alchemy.com/v2/#{ENV["ALCHEMY_KEY"]}"
-    @protocol = Safe::Protocol.new(
+    @protocol = SafeEthRuby::Protocol.new(
       signer: @delegate,
       chain_id: 11_155_111,
       safe_address: "0x8739A1EcCD57B38c270070E89dc25958AAb6b750",
@@ -20,8 +20,8 @@ class ProtocolTest < Minitest::Test
 
   def test_transaction_hash
     expected = "bf5f7a81565b3ee208b55b2c1da87ecffb507748431f46a7225ec83523139be3"
-    data = Safe::Util.encode_multi_send_data(@transactions)
-    encoded_data = Safe::Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
+    data = SafeEthRuby::Util.encode_multi_send_data(@transactions)
+    encoded_data = SafeEthRuby::Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
     transactions = {
       to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
       value: 0,

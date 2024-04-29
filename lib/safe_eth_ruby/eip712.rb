@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Safe
+module SafeEthRuby
   module Eip712
     class << self
       def build(transaction, chain_id, verifying_contract)

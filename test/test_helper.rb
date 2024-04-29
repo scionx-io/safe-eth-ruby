@@ -7,5 +7,5 @@ require "dotenv/load"
 require "minitest/autorun"
 
 $LOAD_PATH.unshift(File.join(File.expand_path(__dir__), "..", "lib"))
-require "safe.rb"
+require "safe_eth_ruby.rb"
 require "eth"
