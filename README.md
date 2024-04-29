@@ -1,4 +1,3 @@
-```markdown
 # SafeEthRubyGem
 
 Welcome to SafeEthRubyGem! This gem provides functionality to interact with Ethereum smart contracts safely using Ruby.
@@ -10,12 +9,10 @@ To install the gem, add it to your Gemfile:
 ```sh
 $ bundle add safe_eth_ruby
 ```
-rub
 
 ## Usage
 
-```
-
+```ruby
 require "safe"
 
 owner = Eth::Key.new(priv: ENV["OWNER_SAFE"])
@@ -28,15 +25,17 @@ transactions = [
   { operation: 0, to: "0x", value: 1, data: Eth::Util.hex_to_bin("0x") },
   { operation: 0, to: "0x", value: 1, data: Eth::Util.hex_to_bin("0x") },
 ]
-
-# 1. if the signer's address is a delegate
+```
+#### 1. if the signer's address is a delegate
+```ruby
 api.delegates
 response = api.delete_delegate(delegate_address: delegate.address.to_s, owner: owner)
 
 response = api.add_delegate(label: "Signer Delegate", delegate_address: delegate.address.to_s, owner: owner)
+```
 
-# 2 createTransaction
-
+#### 2. createTransaction
+```ruby
 protocol = Safe::Protocol.new(signer: delegate, chain_id: 11155111, safe_address: ENV["SAFE_ADDRESS"], rpc: rpc)
 
 response = protocol.create_transaction(transactions
@@ -60,5 +59,3 @@ To release a new version:
 ## Contributing
 
 Bug reports and pull requests are welcome on [GitHub](https://github.com/[USERNAME]/safe_eth_ruby_gem).
-```
-
