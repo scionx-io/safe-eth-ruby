@@ -2,7 +2,7 @@
 
 require "eth"
 
-module Safe
+module SafeEthRuby
   class Contract
     attr_reader :client, :safe_contract
 
@@ -11,7 +11,7 @@ module Safe
       @safe_contract = Eth::Contract.from_abi(
         name: "SafeContract",
         address: safe_address,
-        abi: Safe::ABI::PROXY,
+        abi: SafeEthRuby::ABI::PROXY,
       )
     end
 
