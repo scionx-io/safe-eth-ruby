@@ -3,7 +3,6 @@
 require "abi_coder_rb"
 module Safe
   class Protocol
-    include AbiCoderRb
     attr_reader :safe_api, :signer, :chain_id, :safe_address
 
     def initialize(signer:, chain_id:, safe_address:, rpc:)
@@ -16,14 +15,14 @@ module Safe
 
     # Creates a consolidated transaction for all given individual transactions
     def create_transaction(txs)
-      data = "0x#{encode_multi_send_data(txs)}"
+      data = Util.encode_multi_send_data(txs)
       encoded_data = Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
-
       transaction = build_transaction(encoded_data)
-      tx_hash = Eip712.build(transaction, @chain_id, @safe_address)
-      signature = Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
 
-      @safe_api.multisig_transaction(
+      tx_hash = transaction_hash(transaction)
+      signature = sign_hash(tx_hash)
+
+      result = @safe_api.multisig_transaction(
         to: transaction[:to],
         value: transaction[:value],
         data: transaction[:data],
@@ -38,6 +37,8 @@ module Safe
         sender: @signer.address.to_s,
         signature: "0x#{signature}",
       )
+
+      result.merge({ tx_hash: "0x#{Eth::Util.bin_to_hex(tx_hash)}" })
     end
 
     def build_transaction(encoded_data)
@@ -55,17 +56,12 @@ module Safe
       }
     end
 
-    # Encodes multiple transactions for multi-send purposes
-    def encode_multi_send_data(txs)
-      txs.map { |tx| encode_meta_transaction(tx) }.join
+    def transaction_hash(transaction)
+      Eip712.build(transaction, @chain_id, @safe_address)
     end
 
-    # Encode a meta transaction
-    def encode_meta_transaction(tx)
-      types = ["uint8", "address", "uint256", "uint256", "bytes"]
-      values = [tx[:operation], tx[:to], tx[:value], tx[:data].bytesize, tx[:data]]
-      bin_data = encode(types, values, true)
-      Eth::Util.bin_to_hex(bin_data)
+    def sign_hash(tx_hash)
+      Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
     end
   end
 end

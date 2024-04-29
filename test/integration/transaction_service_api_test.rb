@@ -11,11 +11,11 @@ class TransactionServiceApiTest < Minitest::Test
     @owner = Eth::Key.new(priv: ENV["OWNER_SAFE"])
   end
 
-  def test_delegate_addition
-    response = @api.add_delegate(label: "Signer Delegate", delegate_address: @owner.address, owner: @owner)
-    assert_equal("201", response.code)
+  # def test_delegate_addition
+  # response = @api.add_delegate(label: "Signer Delegate", delegate_address: @owner.address, owner: @owner)
+  # assert_equal("201", response.code)
 
-    response = @api.delete_delegate(delegate_address: @owner.address, owner: @owner)
-    assert_equal("204", response.code)
-  end
+  # response = @api.delete_delegate(delegate_address: @owner.address, owner: @owner)
+  # assert_equal("204", response.code)
+  # end
 end

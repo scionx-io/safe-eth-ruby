@@ -18,8 +18,28 @@ class ProtocolTest < Minitest::Test
     ]
   end
 
+  def test_transaction_hash
+    expected = "bf5f7a81565b3ee208b55b2c1da87ecffb507748431f46a7225ec83523139be3"
+    data = Safe::Util.encode_multi_send_data(@transactions)
+    encoded_data = Safe::Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
+    transactions = {
+      to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
+      value: 0,
+      data: encoded_data,
+      operation: 1,
+      baseGas: 0,
+      gasPrice: 0,
+      gasToken: "0x0000000000000000000000000000000000000000",
+      refundReceiver: "0x0000000000000000000000000000000000000000",
+      nonce: 10,
+      safeTxGas: 0,
+    }
+    actual = Eth::Util.bin_to_hex(@protocol.transaction_hash(transactions))
+    assert_equal(expected, actual)
+  end
+
   def test_create_transaction
     response = @protocol.create_transaction(@transactions)
-    assert_equal("201", response.code)
+    assert_equal(201, response[:code], "Expected HTTP 201 Created, but got #{response[:code]}: #{response}")
   end
 end
