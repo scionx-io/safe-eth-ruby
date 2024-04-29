@@ -40,7 +40,6 @@ protocol = SafeEthRuby::Protocol.new(signer: delegate, chain_id: 11155111, safe_
 
 response = protocol.create_transaction(transactions)
 ```
-
 ## Development
 
 1. Clone the repository.
