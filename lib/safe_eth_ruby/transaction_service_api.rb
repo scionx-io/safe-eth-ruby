@@ -4,7 +4,7 @@ require "net/http"
 require "json"
 require "uri"
 
-module Safe
+module SafeEthRuby
   class TransactionServiceApi
     VERSION = "v1/"
     attr_reader :safe_address, :base_url

@@ -4,11 +4,11 @@
 lib = File.expand_path("../lib/", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require "safe/version"
+require "safe_eth_ruby/version"
 
 Gem::Specification.new do |s|
   s.name        = "safe_eth_ruby"
-  s.version     = Safe::VERSION
+  s.version     = SafeEthRuby::VERSION
   s.platform    = Gem::Platform::RUBY
   s.summary     = "Ruby library for interacting with Gnosis Safe Smart Wallets."
   s.description = "The Safe gem simplifies Gnosis Safe integration in Ruby apps, managing multisig transactions."

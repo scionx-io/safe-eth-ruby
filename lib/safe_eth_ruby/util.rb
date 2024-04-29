@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Safe
+module SafeEthRuby
   module Util
     class << self
       include AbiCoderRb

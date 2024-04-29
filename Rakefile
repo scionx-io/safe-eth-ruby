@@ -4,7 +4,7 @@ require "rake"
 require "rake/testtask"
 
 $LOAD_PATH.unshift(File.expand_path("../lib", __FILE__))
-require "safe/version"
+require "safe_eth_ruby/version"
 
 task(default: [:test, :rubocop])
 
