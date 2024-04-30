@@ -7,7 +7,6 @@ module SafeEthRuby
     attr_reader :safe_api, :signer, :chain_id, :safe_address
 
     def initialize(signer:, chain_id:, safe_address:, rpc:)
-      puts SafeEthRuby.inspect
       @signer = signer
       @chain_id = chain_id
       @safe_address = safe_address
