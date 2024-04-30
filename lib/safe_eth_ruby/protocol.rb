@@ -7,12 +7,11 @@ module SafeEthRuby
     attr_reader :safe_api, :signer, :chain_id, :safe_address
 
     def initialize(signer:, chain_id:, safe_address:, rpc:)
-      puts SafeEthRuby.inspect
       @signer = signer
       @chain_id = chain_id
       @safe_address = safe_address
-      @safe_api = SafeEthRuby::TransactionServiceApi.new(chain_id:, safe_address:)
-      @contract = SafeEthRuby::Contract.new(safe_address:, rpc:)
+      @safe_api = TransactionServiceApi.new(chain_id:, safe_address:)
+      @contract = Contract.new(safe_address:, rpc:)
     end
 
     # Creates a consolidated transaction for all given individual transactions
