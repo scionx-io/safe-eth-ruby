@@ -10,7 +10,8 @@ module SafeEthRuby
     attr_reader :safe_address, :base_url
 
     def initialize(chain_id:, safe_address:)
-      @base_url = SafeEthRuby.get_url(chain_id)) || raise(ArgumentError, "Invalid network"
+      url = SafeEthRuby.get_url(chain_id) || raise(ArgumentError, "Invalid network")
+      @base_url = "#{url}/api/#{VERSION}"
       @safe_address = safe_address
     end
 
@@ -46,10 +47,7 @@ module SafeEthRuby
     end
 
     def owners
-      response = get("owners/#{@safe_address}/safes")
-      return response unless response[:error]
-
-      response[:data]["results"]
+      return get("owners/#{@safe_address}/safes/")
     end
 
     private
