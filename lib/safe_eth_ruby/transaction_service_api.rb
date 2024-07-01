@@ -47,7 +47,7 @@ module SafeEthRuby
     end
 
     def owners
-      return get("owners/#{@safe_address}/safes/")
+      get("owners/#{@safe_address}/safes/")
     end
 
     private
