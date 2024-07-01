@@ -5,6 +5,7 @@ end
 
 # Loads the {SafeEthRuby} module classes.
 require "safe_eth_ruby/transaction_service_api"
+require "safe_eth_ruby/transaction_service_urls"
 require "safe_eth_ruby/protocol"
 require "safe_eth_ruby/contract"
 require "safe_eth_ruby/util"

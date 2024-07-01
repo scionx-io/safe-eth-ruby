@@ -10,8 +10,7 @@ module SafeEthRuby
     attr_reader :safe_address, :base_url
 
     def initialize(chain_id:, safe_address:)
-      (@network = network_name(chain_id)) || raise(ArgumentError, "Invalid network")
-      @base_url = "https://safe-transaction-#{@network}.safe.global/api/#{VERSION}"
+      @base_url = SafeEthRuby.get_url(chain_id)) || raise(ArgumentError, "Invalid network"
       @safe_address = safe_address
     end
 
@@ -46,13 +45,14 @@ module SafeEthRuby
       post("safes/#{@safe_address}/multisig-transactions/", transaction)
     end
 
-    private
+    def owners
+      response = get("owners/#{@safe_address}/safes")
+      return response unless response[:error]
 
-    def network_name(chain_id)
-      Eth::Chain.constants.find do |const_name|
-        return const_name.to_s.downcase if Eth::Chain.const_get(const_name) == chain_id
-      end
+      response[:data]["results"]
     end
+
+    private
 
     def sign_data(delegate_address, owner)
       totp = Time.now.to_i / 3600
