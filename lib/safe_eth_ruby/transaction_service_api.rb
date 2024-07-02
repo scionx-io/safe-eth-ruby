@@ -6,36 +6,40 @@ require "uri"
 
 module SafeEthRuby
   class TransactionServiceApi
-    VERSION = "v1/"
     attr_reader :safe_address, :base_url
 
-    def initialize(chain_id:, safe_address:)
+    def initialize(chain_id:, safe_address: nil)
       url = SafeEthRuby.get_url(chain_id) || raise(ArgumentError, "Invalid network")
-      @base_url = "#{url}/api/#{VERSION}"
       @safe_address = safe_address
+      @base_url = "#{url}/api/"
     end
 
-    def delegates
-      response = get("delegates/?safe=#{@safe_address}")
-      return response unless response[:error]
+    def delegates(safe: nil, delegate: nil, delegator: nil, label: nil, limit: nil, offset: nil)
+      base_path = "v2/delegates/"
+      params = method(__method__).parameters.map do |_, name|
+        value = binding.local_variable_get(name)
+        [name, value] if value
+      end.compact.to_h
 
-      response[:data]["results"]
+      query_string = URI.encode_www_form(params) unless params.empty?
+      path = "#{base_path}?#{query_string}"
+
+      get(path)
     end
 
-    def add_delegate(label:, delegate_address:, owner:)
-      signature = sign_data(delegate_address, owner)
-      post("delegates/", {
-        safe: @safe_address,
-        delegate: delegate_address,
-        delegator: owner.address.to_s,
-        label: label,
-        signature: signature,
+    def add_delegate(safe:, label:, delegate:, delegator:, signature:)
+      post("v2/delegates/", {
+        safe:,
+        delegate:,
+        delegator:,
+        label:,
+        signature:,
       })
     end
 
     def delete_delegate(delegate_address:, owner:)
       signature = sign_data(delegate_address, owner)
-      delete("delegates/#{delegate_address}/", {
+      delete("v1/delegates/#{delegate_address}/", {
         delegate: delegate_address,
         delegator: owner.address.to_s,
         signature: signature,
@@ -43,11 +47,11 @@ module SafeEthRuby
     end
 
     def multisig_transaction(transaction)
-      post("safes/#{@safe_address}/multisig-transactions/", transaction)
+      post("v1/safes/#{@safe_address}/multisig-transactions/", transaction)
     end
 
-    def owners
-      get("owners/#{@safe_address}/safes/")
+    def safes(address:)
+      get("v1/owners/#{address}/safes/")
     end
 
     private
