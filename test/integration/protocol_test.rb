@@ -4,7 +4,7 @@ require "test_helper"
 
 class ProtocolTest < Minitest::Test
   def setup
-    @delegate = Eth::Key.new(priv: ENV["DELEGATE_KEY"])
+    @delegate = Eth::Key.new(priv: ENV["DELEGATE2_KEY"])
     @rpc = "https://eth-sepolia.g.alchemy.com/v2/#{ENV["ALCHEMY_KEY"]}"
     @protocol = SafeEthRuby::Protocol.new(
       signer: @delegate,

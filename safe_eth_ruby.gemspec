@@ -34,5 +34,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency("rake", "~> 13.0")
   # Add other dependencies here
   s.add_dependency("abi_coder_rb", "~> 0.2.8")
-  s.add_dependency("eth", "~> 0.5.11")
+  s.add_dependency("eth", "~> 0.5.12")
 end
