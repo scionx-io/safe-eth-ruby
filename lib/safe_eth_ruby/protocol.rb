@@ -10,6 +10,7 @@ module SafeEthRuby
       @signer = signer
       @chain_id = chain_id
       @safe_address = safe_address
+      @contract = Contract.new(safe_address:, rpc:)
       @safe_api = TransactionServiceApi.new(chain_id:, safe_address:)
       @contract = Contract.new(safe_address:, rpc:)
     end
