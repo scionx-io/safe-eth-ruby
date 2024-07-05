@@ -3,7 +3,7 @@
 require "eth"
 
 module SafeEthRuby
-  class Contract
+  class Safe
     attr_reader :client, :safe_contract
 
     def initialize(safe_address:, rpc:)

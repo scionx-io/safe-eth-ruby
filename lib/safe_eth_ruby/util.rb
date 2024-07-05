@@ -5,6 +5,9 @@ module SafeEthRuby
     class << self
       include AbiCoderRb
 
+      ETHEREUM_V_VALUES = [0, 1, 27, 28].freeze
+      MIN_VALID_V_VALUE_FOR_SAFE_ECDSA = 27
+
       # Slices a hex string to extract a specific byte range
       def slice_hex(value, start_byte = 0, end_byte = nil)
         start_index = start_byte * 2
@@ -13,19 +16,20 @@ module SafeEthRuby
       end
 
       # Adjusts the V value in an Ethereum signature
-      # More info:
-      # https://github.com/q9f/eth.rb/blob/db8becdf8f3c8df743425c23462227e8d873b507/lib/eth/key.rb#L85
-      # https://github.com/safe-global/safe-core-sdk/blob/afd53e86b9bfe20b8c916ca8ea66ac320b57137c/packages/protocol-kit/src/utils/signatures/utils.ts#L74
-      def adjust_v_in_signature(signature)
-        # We expect the V value to be '1c', '1d', '1e', or '1f' and want to set it to '1f'
-        signature[-2..].to_i(16)
-        new_v = 0x1f # Explicitly setting V to '1f'
+      def adjust_v_in_signature(signature, signing_method = :eth_sign, safe_tx_hash = nil, signer_address = nil)
+        signature_v = signature[-2..].to_i(16)
 
-        # Convert new V back to hexadecimal and ensure it's two characters long
-        new_v_hex = new_v.to_s(16).rjust(2, "0")
+        raise "Invalid signature" unless ETHEREUM_V_VALUES.include?(signature_v)
 
-        # Replace the last two characters (original V) with the new V value
-        signature[0...-2] + new_v_hex
+        signature_v += MIN_VALID_V_VALUE_FOR_SAFE_ECDSA if signature_v < MIN_VALID_V_VALUE_FOR_SAFE_ECDSA
+
+        if signing_method == :eth_sign
+          adjusted_signature = signature[0...-2] + signature_v.to_s(16).rjust(2, "0")
+          signature_v += 4 if tx_hash_signed_with_prefix?(safe_tx_hash, adjusted_signature, signer_address)
+        end
+
+        signature_v_hex = signature_v.to_s(16).rjust(2, "0")
+        signature[0...-2] + signature_v_hex
       end
 
       def encode_multi_send_data(txs)
@@ -48,6 +52,18 @@ module SafeEthRuby
         # Encode the data
         encoded_data = Eth::Util.bin_to_hex(Eth::Abi.encode([abi], [Eth::Util.hex_to_bin(data)]))
         "0x#{signature}#{encoded_data}"
+      end
+
+      # Check if a transaction hash is signed with a prefix
+      def tx_hash_signed_with_prefix?(tx_hash, signature, owner_address)
+        r = [signature[2...66]].pack("H*")
+        s = [signature[66...130]].pack("H*")
+        v = signature[130...132].to_i(16)
+        recovered_data = Eth::Key.personal_recover(tx_hash, Eth::Sig.new(v: v, r: r, s: s))
+        recovered_address = Eth::Util.public_key_to_address(recovered_data)
+        recovered_address.downcase != owner_address.downcase
+      rescue StandardError
+        true
       end
     end
   end
