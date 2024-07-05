@@ -10,9 +10,7 @@ module SafeEthRuby
       @signer = signer
       @chain_id = chain_id
       @safe_address = safe_address
-      @contract = Contract.new(safe_address:, rpc:)
-      @safe_api = TransactionServiceApi.new(chain_id:, safe_address:)
-      @contract = Contract.new(safe_address:, rpc:)
+      @safe_api = TransactionServiceApi.new(chain_id:)
     end
 
     # Creates a consolidated transaction for all given individual transactions
@@ -25,21 +23,23 @@ module SafeEthRuby
       signature = sign_hash(tx_hash)
 
       result = @safe_api.multisig_transaction(
-        to: transaction[:to],
-        value: transaction[:value],
-        data: transaction[:data],
-        operation: transaction[:operation],
-        nonce: transaction[:nonce],
-        gasToken: transaction[:gasToken],
-        baseGas: transaction[:baseGas],
-        gasPrice: transaction[:gasPrice],
-        safeTxGas: transaction[:safeTxGas],
-        refundReceiver: transaction[:refundReceiver],
-        contractTransactionHash: "0x#{Eth::Util.bin_to_hex(tx_hash)}",
-        sender: @signer.address.to_s,
-        signature: "0x#{signature}",
+        address: @safe_address,
+        transaction: {
+          to: transaction[:to],
+          value: transaction[:value],
+          data: transaction[:data],
+          operation: transaction[:operation],
+          nonce: transaction[:nonce],
+          gasToken: transaction[:gasToken],
+          baseGas: transaction[:baseGas],
+          gasPrice: transaction[:gasPrice],
+          safeTxGas: transaction[:safeTxGas],
+          refundReceiver: transaction[:refundReceiver],
+          contractTransactionHash: "0x#{Eth::Util.bin_to_hex(tx_hash)}",
+          sender: @signer.address.to_s,
+          signature: "0x#{signature}",
+        },
       )
-
       result.merge({ tx_hash: "0x#{Eth::Util.bin_to_hex(tx_hash)}" })
     end
 
@@ -53,7 +53,7 @@ module SafeEthRuby
         gasPrice: 0,
         gasToken: "0x0000000000000000000000000000000000000000",
         refundReceiver: "0x0000000000000000000000000000000000000000",
-        nonce: @contract.nonce,
+        nonce: next_nonce(address: @safe_address),
         safeTxGas: 0,
       }
     end
@@ -64,6 +64,20 @@ module SafeEthRuby
 
     def sign_hash(tx_hash)
       Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
+    end
+
+    def currnent_nonce
+      @safe_api.safe(address: @safe_address)["nonce"]
+    end
+
+    def next_nonce(address:)
+      transactions = @safe_api.pending_transactions(address:)
+      if transactions["results"].any?
+        nonces = transactions["results"].map { |tx| tx["nonce"] }
+        nonces.max.to_i + 1
+      else
+        currnent_nonce
+      end
     end
   end
 end

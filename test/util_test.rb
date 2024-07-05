@@ -23,8 +23,8 @@ class UtilTest < Minitest::Test
   end
 
   def test_adjust_v_in_signature
-    expected = "a067eeb07384cbe54a82a4716909f124a80d2f9cad4ef2dd8ca106ac25541fcd79740950d9338a0bce1cc15145aac565ff08f98c3f9640a1496d191956c4b7bb1f"
-    signature = "a067eeb07384cbe54a82a4716909f124a80d2f9cad4ef2dd8ca106ac25541fcd79740950d9338a0bce1cc15145aac565ff08f98c3f9640a1496d191956c4b7bb20"
+    expected = "928ba0ef3474a4f705dc27dd6414534be95b7053da3155fa4c35a78a3d34724f242ff7f77f54e118cc333b35e37878192a230b8fdf9be2239a94666ad87a37ca1f"
+    signature = "928ba0ef3474a4f705dc27dd6414534be95b7053da3155fa4c35a78a3d34724f242ff7f77f54e118cc333b35e37878192a230b8fdf9be2239a94666ad87a37ca1b"
 
     actual =  SafeEthRuby::Util.adjust_v_in_signature(signature)
     assert_equal(expected, actual)

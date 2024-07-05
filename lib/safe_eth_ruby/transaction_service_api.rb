@@ -8,37 +8,26 @@ module SafeEthRuby
   class TransactionServiceApi
     attr_reader :safe_address, :base_url
 
-    def initialize(chain_id:, safe_address: nil)
+    def initialize(chain_id:)
       url = SafeEthRuby.get_url(chain_id) || raise(ArgumentError, "Invalid network")
-      @safe_address = safe_address
       @base_url = "#{url}/api/"
     end
 
-    def delegates(safe: nil, delegate: nil, delegator: nil, label: nil, limit: nil, offset: nil)
-      base_path = "v2/delegates/"
-      params = method(__method__).parameters.map do |_, name|
-        value = binding.local_variable_get(name)
-        [name, value] if value
-      end.compact.to_h
-
-      query_string = URI.encode_www_form(params) unless params.empty?
-      path = "#{base_path}?#{query_string}"
-
-      get(path)
+    def delegates(options: {})
+      request_with_params("v2/delegates/", options)
     end
 
     def add_delegate(safe:, label:, delegate:, delegator:, signature:)
       post("v2/delegates/", {
-        safe:,
-        delegate:,
-        delegator:,
-        label:,
-        signature:,
+        safe: safe,
+        delegate: delegate,
+        delegator: delegator,
+        label: label,
+        signature: signature,
       })
     end
 
-    def delete_delegate(delegate_address:, owner:)
-      signature = sign_data(delegate_address, owner)
+    def delete_delegate(delegate_address:, owner:, signature:)
       delete("v1/delegates/#{delegate_address}/", {
         delegate: delegate_address,
         delegator: owner.address.to_s,
@@ -46,15 +35,42 @@ module SafeEthRuby
       })
     end
 
-    def multisig_transaction(transaction)
-      post("v1/safes/#{@safe_address}/multisig-transactions/", transaction)
+    def get_transactions(address:, options: {})
+      request_with_params("v1/safes/#{address}/multisig-transactions/", options)
     end
 
-    def safes(address:)
-      get("v1/owners/#{address}/safes/")
+    def pending_transactions(address:)
+      nonce = safe(address: address)["nonce"]
+
+      get_transactions(address: address, options: {
+        nonce__gte: nonce,
+        executed: "false",
+      })
+    end
+
+    def multisig_transaction(address:, transaction:)
+      post("v1/safes/#{address}/multisig-transactions/", transaction)
+    end
+
+    def safes(owner:)
+      get("v1/owners/#{owner}/safes/")
+    end
+
+    def safe(address:)
+      get("v1/safes/#{address}/")
     end
 
     private
+
+    def request_with_params(endpoint, params)
+      query_params = params.compact
+      get(build_path(endpoint, query_params))
+    end
+
+    def build_path(base_path, params)
+      query_string = URI.encode_www_form(params)
+      query_string.empty? ? base_path : "#{base_path}?#{query_string}"
+    end
 
     def sign_data(delegate_address, owner)
       totp = Time.now.to_i / 3600
@@ -79,6 +95,7 @@ module SafeEthRuby
       Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https") do |http|
         request = http_method_class.new(uri, "Content-Type" => "application/json", "Accept" => "application/json")
         request.body = payload.to_json if payload
+        # puts request.body
         response = http.request(request)
         handle_response_error(response)
       end
@@ -94,16 +111,7 @@ module SafeEthRuby
       if response.is_a?(Net::HTTPSuccess)
         json_response.merge({ code: code })
       else
-        error_message = json_response.values_at(
-          "message",
-          "detail",
-          "data",
-          "nonFieldErrors",
-          "delegate",
-          "safe",
-          "delegator",
-        ).compact.first || response.message
-        { error: error_message, code: code }
+        { errors: json_response, code: code }
       end
     end
   end
