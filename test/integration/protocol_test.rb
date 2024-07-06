@@ -20,8 +20,12 @@ class ProtocolTest < Minitest::Test
 
   def test_transaction_hash
     expected = "bf5f7a81565b3ee208b55b2c1da87ecffb507748431f46a7225ec83523139be3"
-    data = SafeEthRuby::Util.encode_multi_send_data(@transactions)
-    encoded_data = SafeEthRuby::Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
+    transaction_encoded = SafeEthRuby::Util.encode_transactions(@transactions)
+    encoded_data = SafeEthRuby::Util.encode_function_data(
+      function_name: "multiSend",
+      abi: ["bytes"],
+      args: [transaction_encoded],
+    )
     transactions = {
       to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
       value: 0,
@@ -39,7 +43,7 @@ class ProtocolTest < Minitest::Test
   end
 
   def test_create_transaction
-    response = @protocol.create_transaction(@transactions)
+    response = @protocol.create_transaction(transactions: @transactions)
     assert_equal(201, response[:code], "Expected HTTP 201 Created, but got #{response[:code]}: #{response}")
   end
 end

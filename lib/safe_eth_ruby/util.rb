@@ -32,11 +32,11 @@ module SafeEthRuby
         signature[0...-2] + signature_v_hex
       end
 
-      def encode_multi_send_data(txs)
-        "0x" + txs.map { |tx| encode_meta_transaction(tx) }.join
+      def encode_transactions(txs)
+        Eth::Util.hex_to_bin("0x" + txs.map { |tx| encode_transaction(tx) }.join)
       end
 
-      def encode_meta_transaction(tx)
+      def encode_transaction(tx)
         types = ["uint8", "address", "uint256", "uint256", "bytes"]
         values = [tx[:operation], tx[:to], tx[:value], tx[:data].bytesize, tx[:data]]
         bin_data = encode(types, values, true)
@@ -44,13 +44,10 @@ module SafeEthRuby
       end
 
       # Encodes function call data for smart contract interactions
-      def encode_function_data(function_name:, abi:, data:)
-        # Generate the function signature hash
-        hash = Eth::Util.keccak256("#{function_name}(#{abi})")
+      def encode_function_data(function_name:, abi:, args:)
+        hash = Eth::Util.keccak256("#{function_name}(#{abi.join(",")})")
         signature = slice_hex(Eth::Util.bin_to_hex(hash), 0, 4)
-
-        # Encode the data
-        encoded_data = Eth::Util.bin_to_hex(Eth::Abi.encode([abi], [Eth::Util.hex_to_bin(data)]))
+        encoded_data = Eth::Util.bin_to_hex(Eth::Abi.encode(abi, args))
         "0x#{signature}#{encoded_data}"
       end
 
