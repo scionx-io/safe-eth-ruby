@@ -14,11 +14,10 @@ module SafeEthRuby
     end
 
     # Creates a consolidated transaction for all given individual transactions
-    def create_transaction(txs)
-      data = Util.encode_multi_send_data(txs)
-      encoded_data = Util.encode_function_data(function_name: "multiSend", abi: "bytes", data: data)
-      transaction = build_transaction(encoded_data)
-
+    def create_transaction(transactions:, nonce: currnent_nonce)
+      transaction_encoded = Util.encode_transactions(transactions)
+      encoded_data = Util.encode_function_data(function_name: "multiSend", abi: ["bytes"], args: [transaction_encoded])
+      transaction = build_transaction(encoded_data:, nonce:)
       tx_hash = transaction_hash(transaction)
       signature = sign_hash(tx_hash)
 
@@ -43,7 +42,7 @@ module SafeEthRuby
       result.merge({ tx_hash: "0x#{Eth::Util.bin_to_hex(tx_hash)}" })
     end
 
-    def build_transaction(encoded_data)
+    def build_transaction(encoded_data:, nonce: currnent_nonce)
       {
         to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
         value: 0,
@@ -53,7 +52,7 @@ module SafeEthRuby
         gasPrice: 0,
         gasToken: "0x0000000000000000000000000000000000000000",
         refundReceiver: "0x0000000000000000000000000000000000000000",
-        nonce: next_nonce(address: @safe_address),
+        nonce: currnent_nonce,
         safeTxGas: 0,
       }
     end
@@ -70,8 +69,8 @@ module SafeEthRuby
       @safe_api.safe(address: @safe_address)["nonce"]
     end
 
-    def next_nonce(address:)
-      transactions = @safe_api.pending_transactions(address:)
+    def next_nonce
+      transactions = @safe_api.pending_transactions(address: @safe_address)
       if transactions["results"].any?
         nonces = transactions["results"].map { |tx| tx["nonce"] }
         nonces.max.to_i + 1
