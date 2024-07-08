@@ -52,7 +52,7 @@ module SafeEthRuby
         gasPrice: 0,
         gasToken: "0x0000000000000000000000000000000000000000",
         refundReceiver: "0x0000000000000000000000000000000000000000",
-        nonce: currnent_nonce,
+        nonce:,
         safeTxGas: 0,
       }
     end
