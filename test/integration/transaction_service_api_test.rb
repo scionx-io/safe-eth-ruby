@@ -19,8 +19,8 @@ class TransactionServiceApiTest < Minitest::Test
     refute_empty(response["results"])
   end
 
-  def test_transacton
-    response = @api.transacton(
+  def test_transaction
+    response = @api.transaction(
       safe_tx_hash: "0xce9f7339edc3be26dee4c9c14d29303f3ad9c9c3f6612322a495df5af983abe0",
     )
     assert_equal(response["safe"], "0x73E0f6f550B3976b1bBDB835967Ebb687f5A2aFA")
