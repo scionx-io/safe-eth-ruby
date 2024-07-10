@@ -35,6 +35,10 @@ module SafeEthRuby
       })
     end
 
+    def transacton(safe_tx_hash:)
+      get("v1/multisig-transactions/#{safe_tx_hash}/")
+    end
+
     def get_transactions(address:, options: {})
       request_with_params("v1/safes/#{address}/multisig-transactions/", options)
     end
