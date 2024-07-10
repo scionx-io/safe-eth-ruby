@@ -35,7 +35,7 @@ module SafeEthRuby
       })
     end
 
-    def transacton(safe_tx_hash:)
+    def transaction(safe_tx_hash:)
       get("v1/multisig-transactions/#{safe_tx_hash}/")
     end
 

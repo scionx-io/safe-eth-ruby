@@ -62,7 +62,8 @@ GEM
       pkg-config (~> 1.5)
       rubyzip (~> 2.3)
     regexp_parser (2.9.0)
-    rexml (3.2.6)
+    rexml (3.3.1)
+      strscan
     rubocop (1.61.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -85,6 +86,7 @@ GEM
     rubyzip (2.3.2)
     scrypt (3.0.7)
       ffi-compiler (>= 1.0, < 2.0)
+    strscan (3.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
