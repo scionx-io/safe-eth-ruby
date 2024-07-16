@@ -15,11 +15,24 @@ module SafeEthRuby
       )
     end
 
-    # Fetch nonce from the contract
+    def balance
+      @client.get_balance(@safe_contract.address)
+    end
+
     def nonce
       @client.call(@safe_contract, "nonce")
-    rescue StandardError => e
-      warn("Error fetching nonce: #{e.message}")
+    end
+
+    def hash_approved?(address:, tx_hash:)
+      @client.call(@safe_contract, "approvedHashes", address, tx_hash)
+    end
+
+    def owners
+      @client.call(@safe_contract, "getOwners")
+    end
+
+    def threshold
+      @client.call(@safe_contract, "getThreshold")
     end
   end
 end

@@ -7,6 +7,7 @@ module SafeEthRuby
 
       ETHEREUM_V_VALUES = [0, 1, 27, 28].freeze
       MIN_VALID_V_VALUE_FOR_SAFE_ECDSA = 27
+      SIGNATURE_LENGTH_BYTES = 65
 
       # Slices a hex string to extract a specific byte range
       def slice_hex(value, start_byte = 0, end_byte = nil)
@@ -61,6 +62,36 @@ module SafeEthRuby
         recovered_address.downcase != owner_address.downcase
       rescue StandardError
         true
+      end
+
+      def build_signature(signatures)
+        signatures.sort_by! { |sig| sig[:signer].downcase }
+
+        signature_bytes = "0x"
+        dynamic_bytes = ""
+
+        signatures.each do |sig|
+          if sig[:dynamic]
+            dynamic_bytes_length = dynamic_bytes.length / 2
+            position = signatures.length * SIGNATURE_LENGTH_BYTES + dynamic_bytes_length
+            dynamic_part_position = position.to_s(16).rjust(64, "0")
+
+            data_length = sig[:data][2..-1].length / 2
+            dynamic_part_length = data_length.to_s(16).rjust(64, "0")
+
+            signer_part = sig[:signer][2..-1].rjust(64, "0")
+            static_signature = "#{signer_part}#{dynamic_part_position}00"
+
+            dynamic_part_with_length = "#{dynamic_part_length}#{sig[:data][2..-1]}"
+
+            signature_bytes += static_signature
+            dynamic_bytes += dynamic_part_with_length
+          else
+            signature_bytes += sig[:data][2..-1]
+          end
+        end
+
+        Eth::Util.hex_to_bin(signature_bytes + dynamic_bytes)
       end
     end
   end
