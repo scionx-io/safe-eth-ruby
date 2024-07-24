@@ -52,6 +52,12 @@ module SafeEthRuby
       })
     end
 
+    def confirmations(safe_tx_hash:, signature:)
+      post("v1/multisig-transactions/#{safe_tx_hash}/confirmations/", {
+        signature: signature,
+      })
+    end
+
     def multisig_transaction(address:, transaction:)
       post("v1/safes/#{address}/multisig-transactions/", transaction)
     end
