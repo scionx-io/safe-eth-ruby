@@ -35,7 +35,7 @@ module SafeEthRuby
       @client.call(@safe_contract, "getThreshold")
     end
 
-    def is_owner(address:)
+    def owner(address:)
       @client.call(@safe_contract, "isOwner", address:)
     end
   end
