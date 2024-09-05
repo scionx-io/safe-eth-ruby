@@ -41,4 +41,11 @@ class TransactionServiceApiTest < Minitest::Test
     assert_kind_of(Hash, response)
     refute_empty(response)
   end
+
+  def test_balances
+    response = @api.balances(address: "0xbA6A6718BfC116ff0252d527cbc8F302182626c8", trusted: false, exclude_spam: false)
+    assert_kind_of(Array, response)
+    refute_empty(response)
+    assert(response.first["balance"])
+  end
 end
