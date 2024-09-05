@@ -27,10 +27,10 @@ module SafeEthRuby
       })
     end
 
-    def delete_delegate(delegate_address:, owner:, signature:)
-      delete("v1/delegates/#{delegate_address}/", {
+    def delete_delegate(delegate_address:, delegator:, signature:)
+      delete("v2/delegates/#{delegate_address}/", {
         delegate: delegate_address,
-        delegator: owner.address.to_s,
+        delegator: delegator,
         signature: signature,
       })
     end
@@ -68,6 +68,11 @@ module SafeEthRuby
 
     def safe(address:)
       get("v1/safes/#{address}/")
+    end
+
+    def balances(address:, trusted: false, exclude_spam: false)
+      query_params = { trusted: trusted, exclude_spam: exclude_spam }
+      request_with_params("v1/safes/#{address}/balances/", query_params)
     end
 
     private
@@ -117,11 +122,15 @@ module SafeEthRuby
       rescue
         {}
       end
-      code = response.code.to_i
+      return json_response if response.is_a?(Net::HTTPSuccess) && json_response.is_a?(Array)
+
       if response.is_a?(Net::HTTPSuccess)
-        json_response.merge({ code: code })
+        json_response.merge(code: response.code.to_i)
       else
-        { errors: json_response, code: code }
+        {
+          errors: json_response,
+          code: response.code.to_i,
+        }
       end
     end
   end

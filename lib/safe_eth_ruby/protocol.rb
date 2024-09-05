@@ -14,7 +14,7 @@ module SafeEthRuby
       @safe = SafeEthRuby::Safe.new(safe_address:, rpc:)
     end
 
-    def create_transaction(transactions:, nonce: currnent_nonce)
+    def create_transaction(transactions:, nonce: current_nonce) # Fix the typo here
       transaction_encoded = Util.encode_transactions(transactions)
       encoded_data = Util.encode_function_data(function_name: "multiSend", abi: ["bytes"], args: [transaction_encoded])
       transaction = build_transaction(encoded_data:, nonce:)
@@ -61,7 +61,7 @@ module SafeEthRuby
       )
     end
 
-    def build_transaction(encoded_data:, nonce: currnent_nonce)
+    def build_transaction(encoded_data:, nonce: current_nonce) # Fix the typo here as well
       {
         to: "0x998739BFdAAdde7C933B942a68053933098f9EDa",
         value: 0,
@@ -84,7 +84,7 @@ module SafeEthRuby
       Util.adjust_v_in_signature(@signer.personal_sign(tx_hash))
     end
 
-    def currnent_nonce
+    def current_nonce
       @safe.nonce
     end
 
@@ -94,7 +94,7 @@ module SafeEthRuby
         nonces = transactions["results"].map { |tx| tx["nonce"] }
         nonces.max.to_i + 1
       else
-        currnent_nonce
+        current_nonce
       end
     end
   end
