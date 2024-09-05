@@ -48,4 +48,17 @@ class TransactionServiceApiTest < Minitest::Test
     refute_empty(response)
     assert(response.first["balance"])
   end
+
+  def test_multisig_transactions
+    response = @api.multisig_transactions(
+      address: "0xbA6A6718BfC116ff0252d527cbc8F302182626c8",
+      options: { nonce__gte: 16, executed: "false" },
+    )
+
+    assert_kind_of(Hash, response)
+    assert_kind_of(Array, response["results"])
+    refute_empty(response["results"])
+    assert(response["results"].first["safe"])
+    assert(response["results"].first["nonce"])
+  end
 end
