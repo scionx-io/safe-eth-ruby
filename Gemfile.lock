@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    safe_eth_ruby (0.0.9)
+    safe_eth_ruby (0.1.0)
       abi_coder_rb (~> 0.2.8)
       eth (~> 0.5.12)
 
