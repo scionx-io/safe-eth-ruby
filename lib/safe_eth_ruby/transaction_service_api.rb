@@ -79,6 +79,10 @@ module SafeEthRuby
       request_with_params("v1/safes/#{address}/multisig-transactions/", options)
     end
 
+    def all_transactions(address:, options: {})
+      request_with_params("v1/safes/#{address}/all-transactions/", options)
+    end
+
     private
 
     def request_with_params(endpoint, params)

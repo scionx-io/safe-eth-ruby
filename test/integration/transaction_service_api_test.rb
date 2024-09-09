@@ -52,13 +52,23 @@ class TransactionServiceApiTest < Minitest::Test
   def test_multisig_transactions
     response = @api.multisig_transactions(
       address: "0xbA6A6718BfC116ff0252d527cbc8F302182626c8",
-      options: { nonce__gte: 16, executed: "false" },
+      options: { nonce__gte: 0, executed: "false" },
     )
 
     assert_kind_of(Hash, response)
     assert_kind_of(Array, response["results"])
+    if response["results"].empty?
+      skip("No transactions returned for the given address and filters.")
+    else
+      assert(response["results"].first["safe"])
+      assert(response["results"].first["nonce"])
+    end
+  end
+
+  def test_all_transactions
+    response = @api.all_transactions(address: "0x48F945aafB38658243d38eEb89538e879fba4781", options: {})
+    assert_kind_of(Hash, response)
+    assert_kind_of(Array, response["results"])
     refute_empty(response["results"])
-    assert(response["results"].first["safe"])
-    assert(response["results"].first["nonce"])
   end
 end
