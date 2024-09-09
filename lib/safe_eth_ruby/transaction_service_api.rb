@@ -83,6 +83,12 @@ module SafeEthRuby
       request_with_params("v1/safes/#{address}/all-transactions/", options)
     end
 
+    def decode_data(data:, to: nil)
+      payload = { data: data }
+      payload[:to] = to if to
+      post("v1/data-decoder/", payload)
+    end
+
     private
 
     def request_with_params(endpoint, params)
