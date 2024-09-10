@@ -75,12 +75,22 @@ module SafeEthRuby
       request_with_params("v1/safes/#{address}/balances/", query_params)
     end
 
-    def multisig_transactions(address:, options: {})
-      request_with_params("v1/safes/#{address}/multisig-transactions/", options)
-    end
+    # GET
 
     def all_transactions(address:, options: {})
       request_with_params("v1/safes/#{address}/all-transactions/", options)
+    end
+
+    def incomings_transfers(address:, options: {})
+      request_with_params("v1/safes/#{address}/incoming-transfers/", options)
+    end
+
+    def module_transactions(address:, options: {})
+      request_with_params("v1/safes/#{address}/module-transactions/", options)
+    end
+
+    def multisig_transactions(address:, options: {})
+      request_with_params("v1/safes/#{address}/multisig-transactions/", options)
     end
 
     def decode_data(data:, to: nil)
